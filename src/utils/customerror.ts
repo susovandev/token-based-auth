@@ -1,5 +1,5 @@
 import { StatusCodes } from 'http-status-codes';
-abstract class CustomError extends Error {
+export abstract class CustomError extends Error {
     abstract statusCode: number;
 
     constructor(message: string) {
