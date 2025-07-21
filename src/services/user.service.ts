@@ -1,5 +1,9 @@
 import UserDAO from '@/dao/user.dao';
-import { IUserRequestBody } from '@/interface/user.interface';
+import {
+    IChangePasswordDTO,
+    IUser,
+    IUserRequestBody,
+} from '@/interface/user.interface';
 import {
     ConflictException,
     InternalServerError,
@@ -23,13 +27,13 @@ class UserService {
      * @throws InternalServerError - If user registration fails.
      * @returns The registered user details.
      */
-    async registerUser(userData: IUserRequestBody) {
+    async registerUser(reqBody: IUserRequestBody) {
         const userExists =
-            await this.userDAO.checkUserExistsByEmailOrUsername(userData);
+            await this.userDAO.checkUserExistsByEmailOrUsername(reqBody);
 
         if (userExists) throw new ConflictException('User already exists');
 
-        const user = await this.userDAO.registerUser(userData);
+        const user = await this.userDAO.registerUser(reqBody);
 
         if (!user) throw new InternalServerError('User not created');
         return {
@@ -49,16 +53,16 @@ class UserService {
      * @returns An object containing the access token.
      */
 
-    async loginUser(userData: IUserRequestBody) {
+    async loginUser(reqBody: IUserRequestBody) {
         // 1) check if user exists by email or username
         const userExists =
-            await this.userDAO.checkUserExistsByEmailOrUsername(userData);
+            await this.userDAO.checkUserExistsByEmailOrUsername(reqBody);
         console.log(userExists);
         if (!userExists) throw new UnauthorizedException('User not found');
 
         // 2) check if password match
         const ifPasswordMatch = await userExists.comparePassword(
-            userData.password,
+            reqBody.password,
         );
         if (!ifPasswordMatch)
             throw new UnauthorizedException('Password not match');
@@ -76,6 +80,35 @@ class UserService {
                 createdAt: userExists.createdAt,
                 updatedAt: userExists.updatedAt,
             },
+        };
+    }
+
+    /**
+     * Change password.
+     * @param  - The user login data.
+     * @throws UnauthorizedException - If user not exists in the database.
+     * @throws InternalServerError - If user registration fails.
+     * @returns An object containing the access token.
+     */
+    async changePassword(currentUser: IUser, reqBody: IChangePasswordDTO) {
+        // 1) check if user exists
+        const user = await this.userDAO.getUserById(currentUser.id);
+        if (!user) throw new UnauthorizedException('User not found');
+
+        //2) check if password match
+        const passwordMatch = await user.comparePassword(reqBody.oldPassword);
+        if (!passwordMatch)
+            throw new UnauthorizedException('Password not match');
+
+        //3) update password
+        user.password = reqBody.newPassword;
+        const updatedUser = await user.save();
+        return {
+            username: updatedUser.username,
+            email: updatedUser.email,
+            role: updatedUser.role,
+            createdAt: updatedUser.createdAt,
+            updatedAt: updatedUser.updatedAt,
         };
     }
 }

@@ -16,3 +16,9 @@ export interface IUserRequestBody {
     email: string;
     password: string;
 }
+
+export interface IChangePasswordDTO {
+    user: IUser;
+    oldPassword: string;
+    newPassword: string;
+}

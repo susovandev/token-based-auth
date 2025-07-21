@@ -20,9 +20,18 @@ userRoutes.route('/login').post(UserController.loginUser);
 
 /**
  * Get Current User
- * @route POST /api/v1/users/me
+ * @route GET /api/v1/users/me
  * @access private
  */
 userRoutes.route('/me').get(authenticateUser, UserController.getCurrentUser);
+
+/**
+ * Get Current User
+ * @route PATCH /api/v1/users/change-password
+ * @access private
+ */
+userRoutes
+    .route('/change-password')
+    .patch(authenticateUser, UserController.changePassword);
 
 export default userRoutes;

@@ -1,4 +1,8 @@
-import { IUserRequestBody } from '@/interface/user.interface';
+import {
+    IChangePasswordDTO,
+    IUser,
+    IUserRequestBody,
+} from '@/interface/user.interface';
 import { ApiResponse } from '@/utils/ApiResponse';
 import { asyncHandler } from '@/utils/asyncHandler';
 import { Request, Response } from 'express';
@@ -15,13 +19,13 @@ export class UserController {
             req: Request<unknown, unknown, IUserRequestBody>,
             res: Response,
         ) => {
-            const user = await userService.registerUser(req.body);
+            const response = await userService.registerUser(req.body);
 
             res.status(StatusCodes.CREATED).json(
                 new ApiResponse(
                     StatusCodes.CREATED,
                     'Registered successfully',
-                    user,
+                    response,
                 ),
             );
         },
@@ -38,16 +42,21 @@ export class UserController {
             req: Request<unknown, unknown, IUserRequestBody>,
             res: Response,
         ) => {
-            const user = await userService.loginUser(req.body);
+            const response = await userService.loginUser(req.body);
 
             res.status(StatusCodes.OK).json(
-                new ApiResponse(StatusCodes.OK, 'Logged in successfully', user),
+                new ApiResponse(
+                    StatusCodes.OK,
+                    'Logged in successfully',
+                    response,
+                ),
             );
         },
     );
+
     /**
      * Get Current User
-     * @returns
+     * @returns An object containing the current user.
      */
 
     static getCurrentUser = asyncHandler(
@@ -57,6 +66,30 @@ export class UserController {
                     StatusCodes.OK,
                     'User found successfully',
                     req.user,
+                ),
+            );
+        },
+    );
+
+    /**
+     * Change Password
+     * @returns An object containing the new last password.
+     */
+
+    static changePassword = asyncHandler(
+        async (
+            req: Request<unknown, unknown, IChangePasswordDTO>,
+            res: Response,
+        ) => {
+            const response = await userService.changePassword(
+                req.user as IUser,
+                req.body,
+            );
+            res.status(StatusCodes.OK).json(
+                new ApiResponse(
+                    StatusCodes.OK,
+                    'Password changed successfully',
+                    response,
                 ),
             );
         },

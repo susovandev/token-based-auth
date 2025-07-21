@@ -21,6 +21,16 @@ export default class UserDAO {
     }
 
     /**
+     * Checks if a user with the provided email or username already exists in the database.
+     * @param userData - The user email or username to check.
+     * @returns A promise that resolves to true if the user exists, false otherwise.
+     */
+    async getUserById(userId: string) {
+        const existingUser = await User.findById(userId);
+        return existingUser;
+    }
+
+    /**
      * Creates a new user document in the database.
      * @param user - The user data to be saved.
      * @returns A promise that resolves to the newly created user document.
