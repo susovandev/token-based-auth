@@ -45,4 +45,20 @@ export class UserController {
             );
         },
     );
+    /**
+     * Get Current User
+     * @returns
+     */
+
+    static getCurrentUser = asyncHandler(
+        async (req: Request, res: Response) => {
+            res.status(StatusCodes.OK).json(
+                new ApiResponse(
+                    StatusCodes.OK,
+                    'User found successfully',
+                    req.user,
+                ),
+            );
+        },
+    );
 }

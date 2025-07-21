@@ -9,6 +9,7 @@
         "paths": {
             "@/*": ["src/*"]
         },
+        "typeRoots": ["./types", "./node_modules/@types"],
         "removeComments": true,
         "esModuleInterop": true,
         "strict": true,
