@@ -3,6 +3,7 @@ import { config } from '@/config/_config';
 import connectDB from './db/db';
 import globalErrorMiddleware from './middlewares/error.middleware';
 import { NotFoundException } from './utils/customerror';
+import { appRouter } from './routes';
 
 export class App {
     app: Application;
@@ -13,6 +14,7 @@ export class App {
     start() {
         this.setupDatabase();
         this.setupMiddlewares();
+        this.setupRoutes();
         this.setupGlobalErrors();
         this.serverListen();
     }
@@ -25,6 +27,9 @@ export class App {
         this.app.use(express.urlencoded({ extended: true, limit: '100kb' }));
     }
 
+    private setupRoutes() {
+        appRouter(this.app);
+    }
     private setupGlobalErrors() {
         this.app.all(
             '/*splat',

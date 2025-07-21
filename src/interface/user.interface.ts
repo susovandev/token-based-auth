@@ -7,4 +7,11 @@ export interface IUser extends Document {
     role: 'user' | 'admin' | 'superadmin';
     createdAt: Date;
     updatedAt: Date;
+    comparePassword(password: string): Promise<boolean>;
+}
+
+export interface IUserRequestBody {
+    username: string;
+    email: string;
+    password: string;
 }
