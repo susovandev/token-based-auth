@@ -26,4 +26,23 @@ export class UserController {
             );
         },
     );
+
+    /**
+     * login a user
+     * @params IUserRequestBody { username: string, email: string, password: string }
+     * @returns An object containing the access token.
+     */
+
+    static loginUser = asyncHandler(
+        async (
+            req: Request<unknown, unknown, IUserRequestBody>,
+            res: Response,
+        ) => {
+            const user = await userService.loginUser(req.body);
+
+            res.status(StatusCodes.OK).json(
+                new ApiResponse(StatusCodes.OK, 'Logged in successfully', user),
+            );
+        },
+    );
 }

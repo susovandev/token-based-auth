@@ -10,4 +10,11 @@ const userRoutes: Router = Router();
  */
 userRoutes.route('/register').post(UserController.registerUser);
 
+/**
+ * login user
+ * @route POST /api/v1/users/login
+ * @access public
+ */
+userRoutes.route('/login').post(UserController.loginUser);
+
 export default userRoutes;

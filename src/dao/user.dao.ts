@@ -13,12 +13,13 @@ export default class UserDAO {
      */
     async checkUserExistsByEmailOrUsername(
         userData: IUserRequestBody,
-    ): Promise<boolean> {
+    ): Promise<IUser | null> {
         const existingUser = await User.findOne({
             $or: [{ username: userData.username }, { email: userData.email }],
         });
-        return !!existingUser;
+        return existingUser;
     }
+
     /**
      * Creates a new user document in the database.
      * @param user - The user data to be saved.

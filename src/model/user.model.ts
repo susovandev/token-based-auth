@@ -1,7 +1,8 @@
 import { IUser } from '@/interface/user.interface';
 import { Schema, model } from 'mongoose';
-import bcrypt from 'node_modules/bcryptjs';
-
+import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
+import { config } from '@/config/_config';
 const userSchema: Schema<IUser> = new Schema(
     {
         username: {
@@ -41,9 +42,16 @@ userSchema.pre('save', async function (next) {
 });
 
 userSchema.methods.comparePassword = async function (
+    this: IUser,
     password: string,
 ): Promise<boolean> {
     return await bcrypt.compare(password, this.password);
+};
+
+userSchema.methods.getSignedJwtToken = function (this: IUser) {
+    return jwt.sign({ id: this._id }, config.jwt_secret as jwt.Secret, {
+        expiresIn: config.jwt_expires_in as jwt.SignOptions['expiresIn'],
+    });
 };
 
 const User = model<IUser>('User', userSchema);

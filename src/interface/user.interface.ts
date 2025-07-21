@@ -8,6 +8,7 @@ export interface IUser extends Document {
     createdAt: Date;
     updatedAt: Date;
     comparePassword(password: string): Promise<boolean>;
+    getSignedJwtToken(): string;
 }
 
 export interface IUserRequestBody {
